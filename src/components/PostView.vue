@@ -1,24 +1,22 @@
 <template>
-  <div class="template">
-    <div class="post" v-for="item in instaData" :key="item">
-      <div class="post-header">
-        <div
-          class="profile"
-          :style="{ backgroundImage: `url(${item.userImage})` }"
-        ></div>
-        <span class="profile-name">{{ item.name }}</span>
-      </div>
+  <div class="post" v-for="item in instaData" :key="item">
+    <div class="post-header">
       <div
-        class="post-body"
-        :style="{ backgroundImage: `url(${item.postImage})` }"
+        class="profile"
+        :style="{ backgroundImage: `url(${item.userImage})` }"
       ></div>
-      <div class="post-content">
-        <p>{{ item.likes }}</p>
-        <p>
-          <strong>{{ item.filter }}</strong> {{ item.content }}
-        </p>
-        <p class="date">{{ item.date }}</p>
-      </div>
+      <span class="profile-name">{{ item.name }}</span>
+    </div>
+    <div
+      class="post-body"
+      :style="{ backgroundImage: `url(${item.postImage})` }"
+    ></div>
+    <div class="post-content">
+      <p>{{ item.likes }}</p>
+      <p>
+        <strong>{{ item.filter }}</strong> {{ item.content }}
+      </p>
+      <p class="date">{{ item.date }}</p>
     </div>
   </div>
 </template>

@@ -1,38 +1,51 @@
 <template>
-  <div class="template">
-    <PostView :instaData="instaData" v-if="step == 0" />
+  <PostView :instaData="instaData" v-if="step == 0" />
 
-    <!-- 필터선택페이지 -->
-    <div v-else-if="step == 1">
-      <div class="upload-image"></div>
-      <div class="filters">
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-      </div>
+  <!-- 필터선택페이지 -->
+  <div v-else-if="step == 1">
+    <div
+      class="upload-image"
+      :style="{ background: `url(${url}) no-repeat center/cover` }"
+    ></div>
+    <div class="filters">
+      <FilterBox :url="url" v-for="item in filters" :key="item" :item="item">
+        <span>{{ item }}</span>
+      </FilterBox>
     </div>
-    <!-- 글작성페이지 -->
-    <div v-else-if="2">
-      <div class="upload-image"></div>
-      <div class="write">
-        <textarea class="write-box">write!</textarea>
-      </div>
+  </div>
+  <!-- 글작성페이지 -->
+  <div v-else-if="2">
+    <div
+      class="upload-image"
+      :style="{ background: `url(${url}) no-repeat center/cover` }"
+    ></div>
+    <div class="write">
+      <textarea @input="$emit('write', $event.target.value)" class="write-box">
+write!</textarea
+      >
     </div>
   </div>
 </template>
 
 <script>
+import filters from '../assets/filters.js';
 import PostView from './PostView.vue';
+import FilterBox from './FilterBox.vue';
 export default {
   name: 'ContainerView',
+  data() {
+    return {
+      filters: filters,
+    };
+  },
   props: {
     instaData: Array,
     step: Number,
+    url: String,
   },
   components: {
     PostView,
+    FilterBox,
   },
 };
 </script>

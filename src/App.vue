@@ -1,38 +1,35 @@
 <template>
-  <div class="template">
-    <div class="header">
-      <ul class="header-button-left">
-        <li>Cancel</li>
-      </ul>
-      <ul class="header-button-right">
-        <li>Next</li>
-      </ul>
-      <img src="./assets/logo.png" class="logo" />
-    </div>
+  <div class="header">
+    <ul class="header-button-left">
+      <li>Cancel</li>
+    </ul>
+    <ul class="header-button-right">
+      <li @click="step++" v-if="step == 1">Next</li>
+      <li @click="publish" v-if="step == 2">발행</li>
+    </ul>
+    <img src="./assets/logo.png" class="logo" />
+  </div>
 
-    <ContainerView :instaData="instaData" :step="step" />
-    <button @click="more">더보기</button>
+  <ContainerView
+    :instaData="instaData"
+    :step="step"
+    :url="url"
+    @write="write = $event"
+  />
+  <button @click="more" v-if="step == 0">더보기</button>
 
-    <div class="footer">
-      <ul class="footer-button-plus">
-        <input type="file" id="file" class="inputfile" @change="upload" />
-        <label for="file" class="input-plus">+</label>
-      </ul>
-    </div>
-
-    <div v-if="step == 0">내용0</div>
-    <div v-if="step == 1">내용1</div>
-    <div v-if="step == 2">내용2</div>
-    <button @click="step = 0">버튼0</button>
-    <button @click="step = 1">버튼1</button>
-    <button @click="step = 2">버튼2</button>
+  <div class="footer">
+    <ul class="footer-button-plus">
+      <input type="file" id="file" class="inputfile" @change="upload" />
+      <label for="file" class="input-plus">+</label>
+    </ul>
   </div>
 </template>
 
 <script>
 import instaData from './assets/instadata.js';
-import ContainerView from './components/ContainerView.vue';
 import axios from 'axios';
+import ContainerView from './components/ContainerView.vue';
 
 export default {
   name: 'App',
@@ -41,6 +38,8 @@ export default {
       step: 0,
       instaData: instaData,
       moreCount: 0,
+      url: '',
+      write: '',
     };
   },
   methods: {
@@ -57,10 +56,28 @@ export default {
     },
     upload(e) {
       let file = e.target.files;
-      console.log(file[0].type);
+      const imageCheck = file[0].type.split('/')[0];
+      if (imageCheck != 'image') {
+        alert('이미지파일을 선택해주세요');
+        return;
+      }
       let url = URL.createObjectURL(file[0]);
-      console.log(url);
+      this.url = url;
       this.step++;
+    },
+    publish() {
+      var myBorad = {
+        name: 'Kim Hyun',
+        userImage: 'https://placeimg.com/100/100/arch',
+        postImage: this.url,
+        likes: 36,
+        date: 'May 15',
+        liked: false,
+        content: this.write,
+        filter: 'perpetua',
+      };
+      this.instaData.unshift(myBorad);
+      this.step = 0;
     },
   },
   components: {
@@ -121,7 +138,6 @@ ul {
   width: 80px;
   margin: auto;
   text-align: center;
-  cursor: pointer;
   font-size: 24px;
   padding-top: 12px;
 }
