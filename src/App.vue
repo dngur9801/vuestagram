@@ -1,59 +1,59 @@
 <template>
   <div class="header">
-    <ul class="header-button-left">
-      <li>Cancel</li>
-    </ul>
-    <ul class="header-button-right">
-      <li @click="step++" v-if="step == 1">Next</li>
-      <li @click="publish" v-if="step == 2">발행</li>
-    </ul>
-    <img src="./assets/logo.png" class="logo" />
+    <div class="header-middle">
+      <img
+        src="./assets/insta_logo.png"
+        class="header-button-left"
+        @click="$router.push('/')"
+      />
+      <img src="./assets/logo.png" class="logo" />
+      <ul class="header-button-right">
+        <li>Next</li>
+        <li>발행</li>
+      </ul>
+    </div>
   </div>
-
-  <ContainerView
+  <!-- <ContainerView
     :instaData="instaData"
     :step="step"
     :url="url"
-    @write="write = $event"
-  />
-  <button @click="more" v-if="step == 0">더보기</button>
-
+    @writeText="write = $event"
+    @writeName="writeName = $event"
+    :filter="filter"
+  /> -->
+  <router-view
+    :filter="filter"
+    :url="url"
+    :instaData="instaData"
+    @writeText="write = $event"
+    @writeName="writeName = $event"
+    @publish="publish()"
+  ></router-view>
   <div class="footer">
-    <ul class="footer-button-plus">
+    <div class="footer-button-plus">
       <input type="file" id="file" class="inputfile" @change="upload" />
       <label for="file" class="input-plus">+</label>
-    </ul>
+    </div>
   </div>
 </template>
 
 <script>
-import instaData from './assets/instadata.js';
 import axios from 'axios';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import ContainerView from './components/ContainerView.vue';
 
 export default {
   name: 'App',
   data() {
     return {
-      step: 0,
-      instaData: instaData,
-      moreCount: 0,
       url: '',
       write: '',
+      filter: '',
+      writeName: '',
     };
   },
   methods: {
-    more() {
-      axios
-        .get(
-          'https://codingapple1.github.io/vue/more' + this.moreCount + '.json'
-        )
-        .then(result => {
-          console.log(result.data);
-          this.instaData.push(result.data);
-          this.moreCount++;
-        });
-    },
+    ...mapMutations(['dataPush']),
     upload(e) {
       let file = e.target.files;
       const imageCheck = file[0].type.split('/')[0];
@@ -63,22 +63,37 @@ export default {
       }
       let url = URL.createObjectURL(file[0]);
       this.url = url;
-      this.step++;
+      this.$router.push('/filter');
     },
     publish() {
-      var myBorad = {
-        name: 'Kim Hyun',
+      let myBorad = {
+        name: this.writeName,
         userImage: 'https://placeimg.com/100/100/arch',
         postImage: this.url,
-        likes: 36,
+        likes: 0,
         date: 'May 15',
         liked: false,
         content: this.write,
-        filter: 'perpetua',
+        filter: this.filter,
       };
-      this.instaData.unshift(myBorad);
-      this.step = 0;
+      if (this.write == '') {
+        alert('내용을 입력하세요');
+      } else if (this.writeName == '') {
+        alert('이름을 입력하세요');
+      } else {
+        this.dataPush(myBorad);
+        this.$router.push('/');
+      }
     },
+  },
+  computed: {
+    ...mapState(['instaData']),
+  },
+
+  mounted() {
+    this.emitter.on('filter', data => {
+      this.filter = data;
+    });
   },
   components: {
     ContainerView,
@@ -87,38 +102,33 @@ export default {
 </script>
 
 <style>
-@import 'style.css';
 body {
   margin: 0;
 }
 ul {
-  padding: 5px;
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 .logo {
   width: 22px;
-  margin: auto;
-  display: block;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 13px;
+  object-fit: contain;
 }
 .header {
   width: 100%;
-  height: 40px;
   background-color: white;
-  padding-bottom: 8px;
-  position: sticky;
-  top: 0;
+  border: 1px solid #aaa;
+}
+.header-middle {
+  width: 935px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 }
 .header-button-left {
-  color: skyblue;
-  float: left;
-  width: 50px;
-  padding-left: 20px;
   cursor: pointer;
-  margin-top: 10px;
 }
 .header-button-right {
   color: skyblue;
@@ -127,6 +137,7 @@ ul {
   cursor: pointer;
   margin-top: 10px;
 }
+
 .footer {
   width: 100%;
   position: sticky;

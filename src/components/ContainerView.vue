@@ -1,96 +1,34 @@
 <template>
-  <PostView :instaData="instaData" v-if="step == 0" />
-
-  <!-- 필터선택페이지 -->
-  <div v-else-if="step == 1">
-    <div
-      class="upload-image"
-      :style="{ background: `url(${url}) no-repeat center/cover` }"
-    ></div>
-    <div class="filters">
-      <FilterBox :url="url" v-for="item in filters" :key="item" :item="item">
-        <span>{{ item }}</span>
-      </FilterBox>
-    </div>
-  </div>
-  <!-- 글작성페이지 -->
-  <div v-else-if="2">
-    <div
-      class="upload-image"
-      :style="{ background: `url(${url}) no-repeat center/cover` }"
-    ></div>
-    <div class="write">
-      <textarea @input="$emit('write', $event.target.value)" class="write-box">
-write!</textarea
-      >
-    </div>
+  <div class="section">
+    <PostView :instaData="instaData" :step="step" />
+    <MyInfo />
   </div>
 </template>
 
 <script>
-import filters from '../assets/filters.js';
 import PostView from './PostView.vue';
 import FilterBox from './FilterBox.vue';
+import MyInfo from './MyInfo.vue';
 export default {
   name: 'ContainerView',
-  data() {
-    return {
-      filters: filters,
-    };
-  },
   props: {
     instaData: Array,
     step: Number,
     url: String,
+    filter: String,
   },
+
   components: {
     PostView,
     FilterBox,
+    MyInfo,
   },
 };
 </script>
 
 <style>
-.upload-image {
-  width: 100%;
-  height: 450px;
-  background: cornflowerblue;
-  background-size: cover;
-}
-.filters {
-  overflow-x: scroll;
-  white-space: nowrap;
-}
-.filter-1 {
-  width: 100px;
-  height: 100px;
-  background-color: cornflowerblue;
-  margin: 10px 10px 10px auto;
-  padding: 8px;
-  display: inline-block;
-  color: white;
-  background-size: cover;
-}
-.filters::-webkit-scrollbar {
-  height: 5px;
-}
-.filters::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-.filters::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 5px;
-}
-.filters::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-.write-box {
-  border: none;
-  width: 90%;
-  height: 100px;
-  padding: 15px;
-  margin: auto;
-  display: block;
-  outline: none;
+.section {
+  background-color: #fafafa;
+  padding: 30px 0;
 }
 </style>

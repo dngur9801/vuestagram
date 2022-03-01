@@ -6,7 +6,7 @@ export default [
     likes: 36,
     date: 'May 15',
     liked: false,
-    content: '오늘 무엇을 했냐면요 아무것도 안했어요 ?',
+    content: '날씨가 많이 풀렸네 ',
     filter: 'perpetua',
   },
   {
@@ -16,7 +16,7 @@ export default [
     likes: 20,
     date: 'Apr 20',
     liked: false,
-    content: '흔한 자랑스타그램',
+    content: '밥 뭐먹을지 추천좀',
     filter: 'clarendon',
   },
   {

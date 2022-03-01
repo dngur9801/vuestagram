@@ -1,0 +1,10 @@
+{
+  "name": "John Park",
+  "userImage": "https://placeimg.com/100/100/arch",
+  "postImage": "https://placeimg.com/640/480/arch",
+  "likes": 10,
+  "date": "May 15",
+  "liked": false,
+  "content": "심심한데 뭐하지",
+  "filter": "perpetua"
+}
