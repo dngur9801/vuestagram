@@ -1,6 +1,22 @@
 <template>
   <div class="search-info" :style="{ left: infoLeft }">
     <div class="mypage-wrap">
+      <div class="post-header my-header">
+        <div
+          class="my-profile"
+          :style="{ backgroundImage: `url(${myHeader})` }"
+          @click="$router.push('/mypage')"
+        ></div>
+        <div class="my-profile-name">
+          <span class="user">user</span>
+          <span class="user-name" @click="$router.push('/mypage')">{{
+            myName
+          }}</span>
+        </div>
+        <span class="profile-follower-btn" @click="emitter.emit('clickModal')"
+          >전환</span
+        >
+      </div>
       <input placeholder="🔍" @input="doThis" class="search" />
       <div class="post-header" v-for="item in follower" :key="item">
         <div
@@ -15,6 +31,7 @@
 </template>
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex';
 export default {
   name: 'MyInfo',
   data() {
@@ -26,14 +43,15 @@ export default {
   },
   methods: {
     doThis(e) {
-      console.log('press');
       const searchTxt = e.target.value;
       this.follower = this.followerCopy.filter(item => {
         return item.name.indexOf(searchTxt) != -1;
       });
     },
   },
-
+  computed: {
+    ...mapState(['myName', 'myHeader']),
+  },
   created() {
     this.infoLeft = (window.innerWidth - 975) / 2 + 614 + 40 + 'px';
   },
@@ -46,7 +64,6 @@ export default {
     window.addEventListener('resize', () => {
       let a = window.innerWidth;
       this.infoLeft = (a - 975) / 2 + 614 + 40 + 'px';
-      console.log(a);
     });
   },
 };
@@ -62,6 +79,43 @@ export default {
   position: fixed;
   top: 120px;
 }
+.post-header {
+  display: flex;
+  padding: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.my-profile {
+  width: 70px !important;
+  height: 70px !important;
+  background-color: red;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.my-profile-name {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 7;
+  padding-left: 10px;
+}
+.user {
+  font-size: 15px;
+  color: #aaa;
+}
+.user-name {
+  font-size: 1.1rem !important;
+  color: rgb(80, 80, 80);
+  cursor: pointer;
+}
+.user-name:hover {
+  text-decoration: underline;
+}
 .search {
   margin-bottom: 10px;
   width: 200px;
@@ -71,19 +125,11 @@ export default {
   border-radius: 10px;
   background-color: #eee;
 }
-.post-header {
-  display: flex;
-  height: 30px;
-  padding: 10px;
-  justify-content: flex-start;
-  align-items: center;
-}
 .profile {
   width: 30px;
   height: 30px;
-  background-size: 100%;
+  background-size: cover;
   border-radius: 50%;
-  flex: 1;
 }
 .profile-name {
   display: block;
@@ -91,6 +137,7 @@ export default {
   padding-top: 7px;
   font-size: 14px;
   flex: 7;
+  color: rgb(80, 80, 80);
 }
 .profile-follower-btn {
   flex: 2;

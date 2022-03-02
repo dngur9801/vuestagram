@@ -8,7 +8,6 @@
 
     <div class="footer-next">
       <span class="next-btn" @click="$router.push('/upload')">Next</span>
-      <!-- <span class="next-btn" @click="publish">발행</span> -->
     </div>
   </div>
 </template>

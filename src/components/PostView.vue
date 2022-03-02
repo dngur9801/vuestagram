@@ -28,6 +28,13 @@
           </p>
           <p class="date">{{ item.date }}</p>
         </div>
+        <div
+          class="delete-btn"
+          @click="deletePost(item.id)"
+          v-if="item.name == myName"
+        >
+          삭제
+        </div>
       </div>
       <button @click="getData()" class="more-btn" v-if="moreCount < 2">
         더보기 {{ moreCount }}/2 ▾
@@ -47,10 +54,15 @@ export default {
 
   methods: {
     ...mapActions(['getData']),
-    ...mapMutations(['likeAdd']),
+    ...mapMutations(['likeAdd', 'deleteMyPost']),
+    deletePost(id) {
+      if (confirm('해당 게시물을 삭제하시겠습니까?')) {
+        this.deleteMyPost(id);
+      }
+    },
   },
   computed: {
-    ...mapState(['instaData', 'moreCount']),
+    ...mapState(['instaData', 'moreCount', 'myName']),
   },
 };
 </script>
@@ -69,6 +81,7 @@ export default {
   background-color: #fff;
   padding: 10px 0;
   border: 1px solid #ccc;
+  position: relative;
 }
 .post:not(:first-child) {
   margin-top: 30px;
@@ -77,7 +90,9 @@ export default {
 .profile {
   width: 30px;
   height: 30px;
-  background-size: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   border-radius: 50%;
   float: left;
 }
@@ -106,6 +121,20 @@ export default {
   font-size: 11px;
   color: grey;
   margin-top: -8px;
+}
+.delete-btn {
+  width: 50px;
+  height: 20px;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 20px;
+  background-color: skyblue;
+  font-size: 0.8rem;
+  position: absolute;
+  top: 23px;
+  right: 14px;
+  cursor: pointer;
 }
 .more-btn {
   display: block;

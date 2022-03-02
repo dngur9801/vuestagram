@@ -29,6 +29,6 @@ export default {
 <style>
 .section {
   background-color: #fafafa;
-  padding: 30px 0;
+  padding: 50px 0;
 }
 </style>

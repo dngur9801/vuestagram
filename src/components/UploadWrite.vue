@@ -5,12 +5,6 @@
       :style="{ background: `url(${url}) no-repeat center/cover` }"
     ></div>
     <div class="write">
-      <input
-        type="text"
-        @input="$emit('writeName', $event.target.value)"
-        class="write-box-name"
-        placeholder="이름을 입력하세요"
-      />
       <textarea
         @input="$emit('writeText', $event.target.value)"
         class="write-box-text"

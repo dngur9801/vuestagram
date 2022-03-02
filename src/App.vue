@@ -1,35 +1,45 @@
 <template>
-  <div class="header">
-    <div class="header-middle">
-      <img
-        src="./assets/insta_logo.png"
-        class="header-button-left"
-        @click="$router.push('/')"
-      />
-      <img src="./assets/logo.png" class="logo" />
-      <ul class="header-button-right">
-        <li>Next</li>
-        <li>발행</li>
-      </ul>
+  <div class="header-wrap">
+    <div class="header">
+      <div class="header-middle">
+        <img
+          src="./assets/insta_logo.png"
+          class="header-button-left"
+          @click="mainPageMove"
+        />
+        <img src="./assets/logo.png" class="logo" />
+        <ul class="header-button-right" v-if="myName != ''">
+          <li>
+            <router-link to="/"><i class="fa-solid fa-house"></i></router-link>
+          </li>
+          <li>
+            <label for="file" class="input-plus">
+              <input type="file" id="file" class="inputfile" @change="upload" />
+              <i class="fa-solid fa-circle-plus"></i>
+            </label>
+          </li>
+          <li
+            class="myPage-btn"
+            :style="{ backgroundImage: `url(${myHeader})` }"
+            @click="$router.push('/mypage')"
+          ></li>
+        </ul>
+      </div>
     </div>
   </div>
-  <!-- <ContainerView
-    :instaData="instaData"
-    :step="step"
-    :url="url"
-    @writeText="write = $event"
-    @writeName="writeName = $event"
-    :filter="filter"
-  /> -->
+  <ChangeModal
+    v-show="clickableModal == true"
+    @closeModal="clickableModal = false"
+    :clickableModal="clickableModal"
+  />
   <router-view
     :filter="filter"
     :url="url"
     :instaData="instaData"
     @writeText="write = $event"
-    @writeName="writeName = $event"
     @publish="publish()"
   ></router-view>
-  <div class="footer">
+  <div class="footer" v-if="myName != ''">
     <div class="footer-button-plus">
       <input type="file" id="file" class="inputfile" @change="upload" />
       <label for="file" class="input-plus">+</label>
@@ -40,8 +50,19 @@
 <script>
 import axios from 'axios';
 import { mapActions, mapMutations, mapState } from 'vuex';
-import ContainerView from './components/ContainerView.vue';
+import ChangeModal from './components/ChangeModal.vue';
 
+let today = new Date();
+let dd = today.getDate();
+let mm = today.getMonth() + 1;
+let yyyy = today.getFullYear();
+if (dd < 10) {
+  dd = '0' + dd;
+}
+if (mm < 10) {
+  mm = '0' + mm;
+}
+today = yyyy + '/' + mm + '/' + dd;
 export default {
   name: 'App',
   data() {
@@ -49,11 +70,20 @@ export default {
       url: '',
       write: '',
       filter: '',
-      writeName: '',
+      clickableModal: false,
     };
   },
+
   methods: {
     ...mapMutations(['dataPush']),
+    mainPageMove() {
+      if (this.myName == '') {
+        alert('프로필을 입력해주세요');
+        this.$router.push('/login');
+      } else {
+        this.$router.push('/');
+      }
+    },
     upload(e) {
       let file = e.target.files;
       const imageCheck = file[0].type.split('/')[0];
@@ -67,19 +97,18 @@ export default {
     },
     publish() {
       let myBorad = {
-        name: this.writeName,
-        userImage: 'https://placeimg.com/100/100/arch',
+        name: this.myName,
+        userImage: this.myHeader,
         postImage: this.url,
         likes: 0,
-        date: 'May 15',
+        date: today,
         liked: false,
         content: this.write,
         filter: this.filter,
+        id: this.postId,
       };
       if (this.write == '') {
         alert('내용을 입력하세요');
-      } else if (this.writeName == '') {
-        alert('이름을 입력하세요');
       } else {
         this.dataPush(myBorad);
         this.$router.push('/');
@@ -87,16 +116,25 @@ export default {
     },
   },
   computed: {
-    ...mapState(['instaData']),
+    ...mapState(['instaData', 'myName', 'myHeader', 'postId']),
+  },
+  beforeCreate() {
+    if (localStorage.getItem('vuex') == null) {
+      this.$router.push('/login');
+    }
   },
 
   mounted() {
     this.emitter.on('filter', data => {
       this.filter = data;
     });
+    this.emitter.on('clickModal', () => {
+      this.clickableModal = true;
+    });
   },
+
   components: {
-    ContainerView,
+    ChangeModal,
   },
 };
 </script>
@@ -110,14 +148,22 @@ ul {
   margin: 0;
   padding: 0;
 }
+a {
+  color: black;
+}
 .logo {
   width: 22px;
   object-fit: contain;
 }
+.header-wrap {
+  height: 60px;
+}
 .header {
+  position: fixed;
   width: 100%;
   background-color: white;
   border: 1px solid #aaa;
+  z-index: 5;
 }
 .header-middle {
   width: 935px;
@@ -125,17 +171,32 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 15px 0;
 }
 .header-button-left {
   cursor: pointer;
 }
 .header-button-right {
-  color: skyblue;
-  float: right;
-  width: 50px;
+  display: flex;
+  gap: 30px;
+}
+.header-button-right li {
   cursor: pointer;
-  margin-top: 10px;
+}
+.fa-house {
+  font-size: 25px;
+}
+.fa-circle-plus {
+  font-size: 25px;
+}
+.myPage-btn {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: skyblue;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .footer {
